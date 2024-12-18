@@ -39,3 +39,58 @@ class Lexer:
                 raise ValueError(f"Unexpected character at position {pos}: {self.expression[pos]}")
         return self.tokens
 
+
+def evaluate(tokens):
+    def parse_expression():
+        value = parse_term()
+        while tokens and tokens[0][0] in ('PLUS', 'MINUS'):
+            token = tokens.pop(0)
+            if token[0] == 'PLUS':
+                value += parse_term()
+            elif token[0] == 'MINUS':
+                value -= parse_term()
+        return value
+
+    def parse_term():
+        value = parse_exponent()
+        while tokens and tokens[0][0] in ('MULTIPLY', 'DIVIDE'):
+            token = tokens.pop(0)
+            if token[0] == 'MULTIPLY':
+                value *= parse_exponent()
+            elif token[0] == 'DIVIDE':
+                value /= parse_exponent()
+        return value
+
+    def parse_exponent():
+        value = parse_factor()
+        while tokens and tokens[0][0] == 'POWER':
+            tokens.pop(0)  # Remove the POWER token
+            value **= parse_factor()
+        return value
+
+    def parse_factor():
+        token = tokens.pop(0)
+        if token[0] == 'NUMBER':
+            return float(token[1])
+        elif token[0] == 'LPAREN':
+            value = parse_expression()
+            if tokens.pop(0)[0] != 'RPAREN':
+                raise ValueError("Mismatched parentheses")
+            return value
+        elif token[0] == 'MINUS':
+            return -parse_factor()
+        elif token[0] == 'SQRT':
+            return math.sqrt(parse_factor())
+        elif token[0] == 'LOG':
+            return math.log(parse_factor())
+        elif token[0] == 'SIN':
+            return math.sin(parse_factor())
+        elif token[0] == 'COS':
+            return math.cos(parse_factor())
+        elif token[0] == 'TAN':
+            return math.tan(parse_factor())
+        else:
+            raise ValueError(f"Unexpected token: {token}")
+
+    return parse_expression()
+
