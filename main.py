@@ -39,7 +39,6 @@ class Lexer:
                 raise ValueError(f"Unexpected character at position {pos}: {self.expression[pos]}")
         return self.tokens
 
-
 def evaluate(tokens):
     def parse_expression():
         value = parse_term()
@@ -94,3 +93,57 @@ def evaluate(tokens):
 
     return parse_expression()
 
+def create_calculator():
+    def append_to_expression(value):
+        entry_var.set(entry_var.get() + value)
+
+    def clear_entry():
+        entry_var.set("")
+
+    def calculate():
+        expression = entry_var.get()
+        try:
+            lexer = Lexer(expression)
+            tokens = lexer.tokenize()
+            result = evaluate(tokens)
+            entry_var.set(str(result))
+        except Exception as e:
+            entry_var.set(f"Error: {e}")
+
+    root = tk.Tk()
+    root.title("Calculator")
+
+    entry_var = tk.StringVar()
+    entry = tk.Entry(root, textvariable=entry_var, font=("Arial", 24), bd=10, insertwidth=4, justify="right")
+    entry.grid(row=0, column=0, columnspan=5, sticky="nsew")
+
+    # Configure columns and rows to scale uniformly
+    for i in range(6):
+        root.grid_rowconfigure(i, weight=1)
+    for j in range(5):
+        root.grid_columnconfigure(j, weight=1)
+
+    buttons = [
+        ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("=", 1, 3), ("C", 1, 4),
+        ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("+", 2, 3), ("-", 2, 4),
+        ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("*", 3, 3), ("/", 3, 4),
+        ("0", 4, 0), (".", 4, 1), ("(", 4, 2), (")", 4, 3), ("^", 4, 4),
+        ("sin", 5, 0), ("cos", 5, 1), ("tan", 5, 2), ("log", 5, 3), ("sqrt", 5, 4),
+    ]
+
+    for (text, row, col) in buttons:
+        if text == "C":
+            action = clear_entry
+        elif text == "=":
+            action = calculate
+        else:
+            action = lambda t=text: append_to_expression(t)
+
+        button = tk.Button(root, text=text, font=("Arial", 18), command=action)
+        button.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)  # Use sticky for full expansion
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    create_calculator()
