@@ -112,12 +112,12 @@ def create_calculator():
 
     root = tk.Tk()
     root.title("Calculator")
+    root.configure(bg="#e9f7f5")
 
     entry_var = tk.StringVar()
     entry = tk.Entry(root, textvariable=entry_var, font=("Arial", 24), bd=10, insertwidth=4, justify="right")
     entry.grid(row=0, column=0, columnspan=5, sticky="nsew")
 
-    # Configure columns and rows to scale uniformly
     for i in range(6):
         root.grid_rowconfigure(i, weight=1)
     for j in range(5):
@@ -134,13 +134,17 @@ def create_calculator():
     for (text, row, col) in buttons:
         if text == "C":
             action = clear_entry
+            button_bg = "#7CBFB2"
         elif text == "=":
             action = calculate
+            button_bg = "#7CBFB2"
         else:
             action = lambda t=text: append_to_expression(t)
+            button_bg = "#c5e7e1"
 
-        button = tk.Button(root, text=text, font=("Arial", 18), command=action)
-        button.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)  # Use sticky for full expansion
+        button = tk.Button(root, text=text, font=("Arial", 18), command=action,
+                           bg=button_bg, fg="#000000")
+        button.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
 
     root.mainloop()
 
