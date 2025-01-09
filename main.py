@@ -63,7 +63,7 @@ def evaluate(tokens):
     def parse_exponent():
         value = parse_factor()
         while tokens and tokens[0][0] == 'POWER':
-            tokens.pop(0)  # Remove the POWER token
+            tokens.pop(0) 
             value **= parse_factor()
         return value
 
